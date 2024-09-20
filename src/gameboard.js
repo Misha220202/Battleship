@@ -1,6 +1,6 @@
-import { generateShips } from './ship';
+import { Ship, generateShips } from './ship';
 
-export class Gameboard {
+export class GameBoard {
     constructor(size = 10) {
         this.size = size;
         this.init();
@@ -9,6 +9,7 @@ export class Gameboard {
     init() {
         this.board = Array(this.size).fill().map(() => Array(this.size).fill(null));
         this.missedAttacks = [];
+        this.shipsToPlace = generateShips();
         this.ships = [];
     }
 
@@ -81,8 +82,8 @@ export class Gameboard {
     }
 
     placeShipRandomly() {
-        const botShips = generateShips();
-        botShips.forEach(ship => {
+        while (this.shipsToPlace[0]) {
+            const ship = this.shipsToPlace.pop();
             let placed = false;
             while (!placed) {
                 const direction = Math.random() > 0.5 ? 'horizontal' : 'vertical';
@@ -94,15 +95,21 @@ export class Gameboard {
                     placed = true;
                 }
             }
-        })
+        }
     }
 
     receiveAttack(x, y) {
         for (let shipObj of this.ships) {
-            const { ship, coordinates } = shipObj;
+            const { ship, coordinates, adjacentCoordinates } = shipObj;
             for (let [shipX, shipY] of coordinates) {
                 if (shipX == x && shipY == y) {
                     ship.hit([x, y]);
+                    if (ship.isSunk()) {
+                        for (let [adjX, adjY] of adjacentCoordinates) {
+                            this.missedAttacks.push([adjX, adjY]);
+                        }
+                        return ship.length;
+                    }
                     return true;
                 }
             }

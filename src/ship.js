@@ -22,6 +22,6 @@ export const generateShips = ()=>{
     const destroyer = new Ship(3);
     const subMarine = new Ship(3);
     const battleShip = new Ship(4);
-    const Carrier = new Ship(5);
-    return [patrolBoat, destroyer, subMarine, battleShip, Carrier];
+    const carrier = new Ship(5);
+    return [patrolBoat, destroyer, subMarine, battleShip, carrier];
 }
