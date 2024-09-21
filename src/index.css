@@ -73,7 +73,8 @@ body {
 }
 
 .shipContainer img {
-    height: 5rem;
+    height: 3.5rem;
+    max-width: 17rem;
     filter: invert(54%) sepia(91%) saturate(200%) hue-rotate(200deg) brightness(90%) contrast(105%);
 }
 
@@ -115,6 +116,10 @@ body {
 
 .chosen {
     background-color: rgb(82, 79, 89);
+}
+
+.active {
+    background-color: blue;
 }
 
 footer {

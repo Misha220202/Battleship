@@ -73,6 +73,7 @@ export class GameBoard {
                     }
                 }
             }
+            this.shipsToPlace.splice(this.shipsToPlace.indexOf(ship),1);
             this.ships.push({
                 ship: ship,
                 coordinates: shipCoordinates,
@@ -83,7 +84,7 @@ export class GameBoard {
 
     placeShipRandomly() {
         while (this.shipsToPlace[0]) {
-            const ship = this.shipsToPlace.pop();
+            const ship = this.shipsToPlace[0];
             let placed = false;
             while (!placed) {
                 const direction = Math.random() > 0.5 ? 'horizontal' : 'vertical';

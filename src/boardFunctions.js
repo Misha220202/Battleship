@@ -3,6 +3,7 @@ export const initBoard = (node, gameBoard) => {
         for (let j = 0; j < gameBoard.size; j++) {
             const cell = document.createElement('div');
             cell.classList.add('cell');
+            cell.dataset.info = `${i},${j}`;
             cell.obj = gameBoard.board[i][j];
             node.appendChild(cell);
         }
