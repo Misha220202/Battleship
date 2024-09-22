@@ -66,14 +66,19 @@ export class GameBoard {
             const adjacentCoordinates = new Set();
             for (let [shipX, shipY] of shipCoordinates) {
                 this.board[shipX][shipY] = ship;
+
                 const adjacents = this.getAdjacent(shipX, shipY);
                 for (let [adjX, adjY] of adjacents) {
-                    if (this.isValidCoordinate(adjX, adjY)) {
-                        adjacentCoordinates.add(`${adjX},${adjY}`);
+                    const adjCoordinate = `${adjX},${adjY}`;
+                    if (this.isValidCoordinate(adjX, adjY) && 
+                        !shipCoordinates.some(([sX, sY]) => sX === adjX && sY === adjY)) {
+                        adjacentCoordinates.add(adjCoordinate);
                     }
                 }
             }
-            this.shipsToPlace.splice(this.shipsToPlace.indexOf(ship),1);
+
+            this.shipsToPlace.splice(this.shipsToPlace.indexOf(ship), 1);
+
             this.ships.push({
                 ship: ship,
                 coordinates: shipCoordinates,
@@ -81,7 +86,7 @@ export class GameBoard {
             });
         }
     }
-
+    
     placeShipRandomly() {
         while (this.shipsToPlace[0]) {
             const ship = this.shipsToPlace[0];

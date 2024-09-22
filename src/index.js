@@ -4,7 +4,7 @@ import { Ship } from "./ship";
 import { GameBoard } from "./gameBoard";
 import { Player, Bot } from './player';
 import { findParentContainerByClass, findParentContainerById } from "./findParentContainer";
-import { initBoard } from "./boardFunctions";
+import { updateBoard } from "./boardFunctions";
 
 const player = new Player();
 const bot = new Bot();
@@ -58,7 +58,7 @@ function initStartPage() {
     const setPlayerBoard = document.querySelector('.setPlayerBoard');
 
     const playerBoard = setPlayerBoard.querySelector('.playerBoard');
-    initBoard(playerBoard, player.gameBoard);
+    updateBoard(playerBoard, player,bot);
 
     const chooseShip = setPlayerBoard.querySelector('.chooseShip');
     const chooseCarrier = chooseShip.querySelector('#carrier');
@@ -74,15 +74,39 @@ function initStartPage() {
     chooseDestroyer.obj = destroyer;
     choosePatrolBoat.obj = patrolBoat;
 
-    const shipsNodeArray = Array.from(setPlayerBoard.querySelectorAll('.shipContainer'));
+    const chooseShipNodes = setPlayerBoard.querySelectorAll('.shipContainer');
 
+    const controlBoard = setPlayerBoard.querySelector('.controlBoard');
     let direction = 'horizontal';
+
+    controlBoard.addEventListener('click', (e) => {
+        const target = e.target;
+        if (target.value == 'horizontal' || target.value == 'vertical') {
+            target.value = target.value == 'horizontal' ? 'vertical' : 'horizontal';
+            direction = target.value;
+            target.textContent = target.value;
+        } else if (target.value == 'random') {
+            player.gameBoard.init();
+            player.gameBoard.placeShipRandomly();
+            updateBoard(playerBoard, player,bot);
+            chooseShipNodes.forEach(chooseShipNode => {
+                chooseShipNode.classList.remove('chosen');
+                chooseShipNode.classList.add('hidden');
+            });
+        } else if (target.value == 'reset') {
+            location.reload();
+        } else if (target.value == 'start') {
+            if (player.gameBoard.shipsToPlace.length == 0) {
+                startGame();
+            }
+        }
+    });
 
     chooseShip.addEventListener('click', (e) => {
         const target = e.target;
         const chooseShipNode = findParentContainerByClass(target, 'shipContainer');
         if (chooseShipNode && !chooseShipNode.classList.contains('hidden')) {
-            shipsNodeArray.forEach(chooseShipNode => {
+            chooseShipNodes.forEach(chooseShipNode => {
                 chooseShipNode.classList.remove('chosen');
             });
             chooseShipNode.classList.add('chosen');
@@ -91,21 +115,17 @@ function initStartPage() {
 
     playerBoard.addEventListener('mousemove', (e) => {
         const chooseShipNode = chooseShip.querySelector('.chosen');
-        if (chooseShipNode) {
-            const brushWidth = chooseShipNode.obj.length;
-
+        if (chooseShipNode && e.target.dataset.info) {
             const cells = playerBoard.querySelectorAll('.cell');
             cells.forEach(cell => cell.classList.remove('active'));
-    
-            const rect = playerBoard.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+
+            const [mouseY, mouseX] = e.target.dataset.info.split(',').map(Number);
             const size = player.gameBoard.size;
-    
-            const col = Math.floor(mouseX / (rect.width / size));
-            const row = Math.floor(mouseY / (rect.height / size));
+            const col = mouseX;
+            const row = mouseY;
             const index = row * size + col;
 
+            const brushWidth = chooseShipNode.obj.length;
             if (direction == 'horizontal') {
                 if (col + brushWidth - 1 < size) {
                     for (let i = 0; i < brushWidth; i++) {
@@ -124,19 +144,74 @@ function initStartPage() {
 
     playerBoard.addEventListener('click', (e) => {
         const chooseShipNode = chooseShip.querySelector('.chosen');
-        if (chooseShipNode) {
+        if (chooseShipNode && e.target.dataset.info) {
+            const [mouseY, mouseX] = e.target.dataset.info.split(',').map(Number);
+            const col = mouseX;
+            const row = mouseY;
+
             const brushWidth = chooseShipNode.obj.length;
             const shipCoordinates = [];
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
-            const size = player.gameBoard.size;
             if (direction == 'horizontal') {
                 for (let i = 0; i < brushWidth; i++) {
-                    shipCoordinates.push([]);
+                    shipCoordinates.push([row, col + i]);
                 }
+            } else {
+                for (let j = 0; j < brushWidth; j++) {
+                    shipCoordinates.push([row + j, col]);
+                }
+            }
+
+            const ship = chooseShipNode.obj;
+            if (player.gameBoard.canPlaceShip(shipCoordinates)) {
+                player.gameBoard.placeShip(ship, row, col, direction);
+                updateBoard(playerBoard, player,bot); chooseShipNode.classList.remove('chosen');
+                chooseShipNode.classList.add('hidden');
             }
         }
     });
+}
+
+function startGame() {
+    gameCenter.innerHTML = `
+        <div class="gaming">
+            <div class="screen">
+                <div class="player">
+                    <p>Player<span class="hidden"> is the Winner!</span></p>
+                    <p><span id="playerShips"></span> ships left.</p>
+                </div>
+                <div class="bot">
+                    <p>Bot<span class="hidden"> is the Winner!</span></p>
+                    <p><span id="botShips"></span> ships left.</p>
+                </div>
+            </div>
+            <div class="playerBoard"></div>
+            <div class="botBoard"></div>
+            <div class="controlBoard">
+                <button class="restart">Restart</button>
+            </div>
+        </div>`;
+
+    const gaming = gameCenter.querySelector('.gaming');
+    const playerBoard = gaming.querySelector('.playerBoard');
+    const botBoard = gaming.querySelector('.botBoard');
+    updateBoard(playerBoard, player,bot);
+    updateBoard(botBoard, bot,player);
+
+    botBoard.addEventListener('click', (e) => {
+        const playerCells = playerBoard.querySelectorAll('.cell');
+        const botCells = botBoard.querySelectorAll('.cell');
+
+        const [mouseY, mouseX] = e.target.dataset.info.split(',').map(Number);
+        const col = mouseX;
+        const row = mouseY;
+        const attackKey = `${row},${col}`;
+        if (!player.attacks.has(attackKey)) {
+            player.attack(bot.gameBoard, row, col);
+            bot.botAttack(player.gameBoard);
+            updateBoard(playerBoard, player,bot);
+            updateBoard(botBoard, bot,player);
+        }
+    })
 }
 
 window.onload = () => {

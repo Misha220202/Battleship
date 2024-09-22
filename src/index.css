@@ -56,6 +56,8 @@ body {
 .chooseShip {
     display: grid;
     gap: 1rem;
+    border: 1px solid white;
+    border-radius: 0.5rem;
 }
 
 .shipContainer {
@@ -116,6 +118,25 @@ body {
 
 .chosen {
     background-color: rgb(82, 79, 89);
+}
+
+.placed {
+    background-color:darkblue;
+}
+.adjacent {
+    background-color: lightgray;
+}
+
+.playerBoard>.missed,
+.botBoard>.missed {
+    background-color: red;
+    border-radius: 50%;
+}
+
+.playerBoard>.hit,
+.botBoard>.hit {
+    background-color: green;
+    border-radius: 50%;
 }
 
 .active {
