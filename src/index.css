@@ -43,7 +43,7 @@ body {
     width: 35rem;
     height: 35rem;
     background-color: rgba(29, 37, 82, 0.5);
-    border: 3px solid white;
+    border: 2px solid white;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
@@ -120,21 +120,34 @@ body {
     background-color: rgb(82, 79, 89);
 }
 
-.placed {
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cell>div {
+    height: 75%;
+    width: 75%;
+}
+
+.playerBoard .placed {
     background-color:darkblue;
 }
-.adjacent {
+
+.setPlayerBoard>.playerBoard .adjacent,
+.sunkAdjacent {
     background-color: lightgray;
 }
 
-.playerBoard>.missed,
-.botBoard>.missed {
+.playerBoard .missed,
+.botBoard .missed {
     background-color: red;
     border-radius: 50%;
 }
 
-.playerBoard>.hit,
-.botBoard>.hit {
+.playerBoard .hit,
+.botBoard .hit {
     background-color: green;
     border-radius: 50%;
 }
