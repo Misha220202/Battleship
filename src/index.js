@@ -245,12 +245,14 @@ function startGame() {
         updateBoard(botBoard, bot, player);
         botShip.textContent = bot.gameBoard.quantityShipsSunk();
         announceWinner(checkWinner(player, bot));
-        setTimeout(() => {
-          bot.botAttack(player.gameBoard);
-          updateBoard(playerBoard, player, bot);
-          playerShip.textContent = player.gameBoard.quantityShipsSunk();
-          announceWinner(checkWinner(player, bot));
-        }, 500);
+        if (!checkWinner(player, bot)) {
+          setTimeout(() => {
+            bot.botAttack(player.gameBoard);
+            updateBoard(playerBoard, player, bot);
+            playerShip.textContent = player.gameBoard.quantityShipsSunk();
+            announceWinner(checkWinner(player, bot));
+          }, 500);
+        }
       }
     }
   });

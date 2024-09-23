@@ -43,14 +43,10 @@ body {
     width: 35rem;
     height: 35rem;
     background-color: rgba(29, 37, 82, 0.5);
-    border: 2px solid white;
+    outline: 2px solid white;
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
-}
-
-.cell {
-    border: 1px solid white;
 }
 
 .chooseShip {
@@ -124,6 +120,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    outline: 1px solid white;
 }
 
 .cell>div {
@@ -132,7 +129,7 @@ body {
 }
 
 .playerBoard .placed {
-    background-color:darkblue;
+    background-color: darkblue;
 }
 
 .setPlayerBoard>.playerBoard .adjacent,
