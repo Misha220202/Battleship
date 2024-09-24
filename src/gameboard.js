@@ -16,6 +16,10 @@ export class GameBoard {
     this.shipBeingAttacked = null;
   }
 
+  isValidCoordinate(x, y) {
+    return x >= 0 && x < this.size && y >= 0 && y < this.size;
+  }
+
   getAdjacent(x, y) {
     return [
       [x - 1, y - 1],
@@ -27,10 +31,6 @@ export class GameBoard {
       [x + 1, y],
       [x + 1, y + 1],
     ];
-  }
-
-  isValidCoordinate(x, y) {
-    return x >= 0 && x < this.size && y >= 0 && y < this.size;
   }
 
   getAllAdjacentCoordinates() {
@@ -102,13 +102,16 @@ export class GameBoard {
 
       this.shipsToPlace.splice(this.shipsToPlace.indexOf(ship), 1);
 
-      this.ships.push({
+      const placedShip = {
         ship: ship,
         coordinates: shipCoordinates,
         adjacentCoordinates: Array.from(adjacentCoordinates).map((coord) =>
           coord.split(',').map(Number)
         ),
-      });
+      };
+      this.ships.push(placedShip);
+
+      return placedShip;
     }
   }
 
@@ -131,7 +134,7 @@ export class GameBoard {
 
   receiveAttack(x, y) {
     for (let shipObj of this.ships) {
-      const { ship, coordinates, adjacentCoordinates } = shipObj;
+      const { ship, coordinates } = shipObj;
       for (let [shipX, shipY] of coordinates) {
         if (shipX == x && shipY == y) {
           ship.hit();

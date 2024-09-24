@@ -15,6 +15,16 @@ export class Player {
     this.attacks.add(attackKey);
     return opponentGameBoard.receiveAttack(x, y);
   }
+
+  checkWinner(opponent) {
+    if (this.gameBoard.allShipsSunk()) {
+      return opponent.name;
+    }
+    if (opponent.gameBoard.allShipsSunk()) {
+      return this.name;
+    }
+    return null;
+  }
 }
 
 export class Bot extends Player {

@@ -1,4 +1,3 @@
-import { GameBoard } from './gameBoard';
 import { Player, Bot } from './player';
 
 export const updateBoard = (node, friend, enemy) => {

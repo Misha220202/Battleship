@@ -1,12 +1,7 @@
 import './index.css';
 
-import { Ship } from './ship';
-import { GameBoard } from './gameBoard';
 import { Player, Bot } from './player';
-import {
-  findParentContainerByClass,
-  findParentContainerById,
-} from './findParentContainer';
+import { findParentContainerByClass } from './findParentContainer';
 import { updateBoard } from './boardFunctions';
 
 const player = new Player();
@@ -204,18 +199,8 @@ function startGame() {
   updateBoard(playerBoard, player, bot);
   updateBoard(botBoard, bot, player);
 
-  const checkWinner = (player, bot) => {
-    if (player.gameBoard.allShipsSunk()) {
-      return bot;
-    }
-    if (bot.gameBoard.allShipsSunk()) {
-      return player;
-    }
-    return null;
-  };
-
   botBoard.addEventListener('click', (e) => {
-    if (!checkWinner(player, bot)) {
+    if (!player.checkWinner(bot)) {
       const screen = gaming.querySelector('.screen');
       const playerScreen = screen.querySelector('.screen>.player .hidden');
       const playerShip = screen.querySelector('.screen>.player #playerShips');
@@ -228,14 +213,14 @@ function startGame() {
       const row = mouseY;
       const attackKey = `${row},${col}`;
 
-      const announceWinner = (winner) => {
-        if (!winner) {
+      const announceWinner = (name) => {
+        if (!name) {
           return;
         }
-        if (winner.name == 'player') {
+        if (name == 'player') {
           playerScreen.classList.remove('hidden');
         }
-        if (winner.name == 'bot') {
+        if (name == 'bot') {
           botScreen.classList.remove('hidden');
         }
       };
@@ -244,13 +229,13 @@ function startGame() {
         player.attack(bot.gameBoard, row, col);
         updateBoard(botBoard, bot, player);
         botShip.textContent = bot.gameBoard.quantityShipsSunk();
-        announceWinner(checkWinner(player, bot));
-        if (!checkWinner(player, bot)) {
+        announceWinner(player.checkWinner(bot));
+        if (!player.checkWinner(bot)) {
           setTimeout(() => {
             bot.botAttack(player.gameBoard);
             updateBoard(playerBoard, player, bot);
             playerShip.textContent = player.gameBoard.quantityShipsSunk();
-            announceWinner(checkWinner(player, bot));
+            announceWinner(player.checkWinner(player, bot));
           }, 500);
         }
       }

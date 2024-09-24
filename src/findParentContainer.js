@@ -7,13 +7,3 @@ export const findParentContainerByClass = (target, className) => {
   }
   return findParentContainerByClass(target.parentElement, className);
 };
-
-export const fndParentContainerById = (target, idName) => {
-  if (target.id == idName) {
-    return target;
-  }
-  if (target == document.body) {
-    return null;
-  }
-  return fndParentContainerById(target.parentElement, idName);
-};
