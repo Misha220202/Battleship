@@ -235,7 +235,7 @@ function startGame() {
             bot.botAttack(player.gameBoard);
             updateBoard(playerBoard, player, bot);
             playerShip.textContent = player.gameBoard.quantityShipsSunk();
-            announceWinner(player.checkWinner(player, bot));
+            announceWinner(player.checkWinner(bot));
           }, 500);
         }
       }
