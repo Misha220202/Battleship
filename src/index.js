@@ -199,8 +199,9 @@ function startGame() {
   updateBoard(playerBoard, player, bot);
   updateBoard(botBoard, bot, player);
 
+  let playerTurn = true;
   botBoard.addEventListener('click', (e) => {
-    if (!player.checkWinner(bot)) {
+    if (playerTurn&&!player.checkWinner(bot)) {
       const screen = gaming.querySelector('.screen');
       const playerScreen = screen.querySelector('.screen>.player .hidden');
       const playerShip = screen.querySelector('.screen>.player #playerShips');
@@ -227,12 +228,14 @@ function startGame() {
 
       if (!player.attacks.has(attackKey)) {
         player.attack(bot.gameBoard, row, col);
+        playerTurn=false;
         updateBoard(botBoard, bot, player);
         botShip.textContent = bot.gameBoard.quantityShipsSunk();
         announceWinner(player.checkWinner(bot));
         if (!player.checkWinner(bot)) {
           setTimeout(() => {
             bot.botAttack(player.gameBoard);
+            playerTurn = true;
             updateBoard(playerBoard, player, bot);
             playerShip.textContent = player.gameBoard.quantityShipsSunk();
             announceWinner(player.checkWinner(bot));
