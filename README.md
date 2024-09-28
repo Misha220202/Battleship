@@ -1,6 +1,6 @@
 # Battleship
 
-## Project Overview
+## Overview
 The Battleship Game is a JavaScript implementation of the classic naval warfare game. Players can compete against the computer, placing ships and attacking until all of the opponent's ships are sunk.
 
 ## Features
